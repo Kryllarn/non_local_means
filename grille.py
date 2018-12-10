@@ -12,3 +12,12 @@ def setGrille(i, j, img, tailleGrille):
                 grille[k][l] = img.getPixel((k - (tailleGrille-1)/2,l - (tailleGrille-1)/2))
 
     return grille
+
+def compareGrille(grille, patch, taille):
+    dist = 0
+    for i in range(taille):
+        for j in range(taille):
+            if(grille[i][j] != -1):
+                dist += abs(grille[i][j] - patch[i][j])
+
+    return dist

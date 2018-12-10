@@ -4,6 +4,7 @@ from PIL import Image as img
 import multiprocessing as mp
 import numpy as np
 
+
 # Lecture de l'image initiale
 PIL_image = img.open("""noising_input.png""")
 
@@ -55,5 +56,5 @@ PIL_image.save("""output.png""", format="""png""")
 #            PIL_image.putpixel((i, j), 255)
 
 
-# data = PIL_image.getdata()
-# print(list(data))
+data = PIL_image.getdata()
+print(list(data))

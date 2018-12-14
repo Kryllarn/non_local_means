@@ -1,4 +1,4 @@
-import Grid
+from Grid import *
 
 
 class Patch(Grid):
@@ -8,7 +8,7 @@ class Patch(Grid):
         self.half_size = half_size                  # default half size
         self.abscissa_size = half_size * 2 + 1      # compute full size
         self.ordinate_size = half_size * 2 + 1      # compute full size
-        self.grid = self.init_matrix()              # initialize patch content
+        self.grid = self.init_grid()              # initialize patch content
         # self.window = Grid(...)                   # initialize window around the patch
         self.fill_grid(self.center, image)
     # end def

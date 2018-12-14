@@ -13,7 +13,7 @@ class Denoiser:
         self.denoised_image = Image.new("""L""", (self.noised_image.size[0], self.noised_image.size[1]))
         self.denoised_image.save("""pictures/output.png""")
         self.patchs_array = [[]]
-        self.closest_patchs_array = [[]]
+        self.closest_patchs_array = []
         self.closest_patchs_array_current_size = 0
         self.closest_patchs_array_maximum_size = 5
     # end def
@@ -37,8 +37,8 @@ class Denoiser:
     # end def
 
     def init_patchs_array(self, size):
-        for x in range(self.denoised_image.width()):
-            for y in range(self.denoised_image.height()):
+        for x in range(self.denoised_image.width):
+            for y in range(self.denoised_image.height):
                 self.patchs_array[x][y] = Patch((x, y), size, self.noised_image)
             # end for
         # end for

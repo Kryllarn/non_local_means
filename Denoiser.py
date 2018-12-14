@@ -1,34 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:Utf-8 -*-
 
-from PIL import Image
-
-
-class Denoiser:
-
-    def __init__(self, filename):
-        self.noised_image = Image.open(filename)
-        self.prepare_image()
-        self.denoised_image = Image.new("""L""", (self.noised_image.size[0], self.noised_image.size[1]))
-        self.denoised_image.save("""pictures/output.png""")
-    # end def
-
-    @staticmethod
-    def display_image_details(image):
-        print("""{ Format :""", image.format,
-              """; Mode :""", image.mode,
-              """; Size :""", image.size, """}""")
-    # end def
-
-    def prepare_image(self):
-        if (self.noised_image.mode == """RGBA""") or (self.noised_image.mode == """RGB"""):
-            # Convert to a greyscale system
-            self.noised_image = self.noised_image.convert("""L""")
-        # end if
-    # end def
-
-# end class
-
+import Patch
+from PIL import Image as img
+import Window
 
 
 def init_tab_patch(image, sizePatch):
@@ -49,11 +24,12 @@ def dist_max(tab_patch):
     return ind
 
 
-def run_denoiser(image, sizePatch, sizeWindow):
+def run_denoiser(image_name, sizePatch, sizeWindow):
+    image = img.open(image_name)
     tab_patch = init_tab_patch(image, sizePatch)
     closest_patch = []
     NB_CLOSEST = 5  # definition du nombre de patchs minimum
-    res_image = PIL.Image.new(L, image.size(), color=0)
+    res_image = img.new('L', image.size(), color=0)
     # parcours de l'image
     for x in range(image.width()):
         for y in range(image.height()):
@@ -68,8 +44,9 @@ def run_denoiser(image, sizePatch, sizeWindow):
                         if len(closest_patch) < NB_CLOSEST:
                             closest_patch[len(closest_patch)] = (u, t, tmp)
                         else:
-                            closest_patch[dist_max(closest_patch)] = (u, t, tmp)
-                        #end if/else
+                            if dist_max(closest_patch) > tmp :
+                                closest_patch[dist_max(closest_patch)] = (u, t, tmp)
+                    #end if
                 # end for
             #end for
 
@@ -87,8 +64,7 @@ def run_denoiser(image, sizePatch, sizeWindow):
 
 
 if __name__ == """__main__""":
-    denoiser = \
-        Denoiser("""pictures/input.png""")
-    denoiser.display_image_details(denoiser.noised_image)
-    denoiser.display_image_details(denoiser.denoised_image)
+    image = run_denoiser("noising_inpuy.png", 1, 10)
+    image.show()
+    print("""""")
 # end if

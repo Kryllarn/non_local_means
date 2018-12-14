@@ -16,9 +16,9 @@ class Patch(Grid):
         for x in range(self.abscissa_size):
             for y in range(self.ordinate_size):
                 if (center[0] + x - self.half_size >= 0 and
-                        center[1] + x - self.half_size >= 0 and
+                        center[1] + y - self.half_size >= 0 and
                         center[0] + x + self.half_size < image.width() and
-                        center[1] + x + self.half_size < image.height()):
+                        center[1] + y + self.half_size < image.height()):
                     self.grid[x][y] = image.getPixel((x - self.half_size, y - self.half_size))
                 # end if
             # end for

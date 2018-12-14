@@ -2,6 +2,7 @@
 # -*- coding:Utf-8 -*-
 
 import Patch
+from PIL import Image as img
 import Window
 
 
@@ -23,11 +24,12 @@ def dist_max(tab_patch):
     return ind
 
 
-def run_denoiser(image, sizePatch, sizeWindow):
+def run_denoiser(image_name, sizePatch, sizeWindow):
+    image = img.open(image_name)
     tab_patch = init_tab_patch(image, sizePatch)
     closest_patch = []
     NB_CLOSEST = 5  # definition du nombre de patchs minimum
-    res_image = PIL.Image.new(L, image.size(), color=0)
+    res_image = img.new('L', image.size(), color=0)
     # parcours de l'image
     for x in range(image.width()):
         for y in range(image.height()):
@@ -42,8 +44,9 @@ def run_denoiser(image, sizePatch, sizeWindow):
                         if len(closest_patch) < NB_CLOSEST:
                             closest_patch[len(closest_patch)] = (u, t, tmp)
                         else:
-                            closest_patch[dist_max(closest_patch)] = (u, t, tmp)
-                        #end if/else
+                            if dist_max(closest_patch) > tmp :
+                                closest_patch[dist_max(closest_patch)] = (u, t, tmp)
+                    #end if
                 # end for
             #end for
 
@@ -61,5 +64,7 @@ def run_denoiser(image, sizePatch, sizeWindow):
 
 
 if __name__ == """__main__""":
+    image = run_denoiser("noising_inpuy.png", 1, 10)
+    image.show()
     print("""""")
 # end if

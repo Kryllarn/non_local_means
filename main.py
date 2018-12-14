@@ -6,7 +6,7 @@ import numpy as np
 
 
 # Lecture de l'image initiale
-PIL_image = img.open("""noising_input.png""")
+PIL_image = img.open("""input.png""")
 
 # Caracteristiques de l'image
 print("""{ Format :""", PIL_image.format,

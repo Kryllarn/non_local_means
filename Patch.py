@@ -9,6 +9,7 @@ class Patch(Grid):
         self.abscissa_size = half_size * 2 + 1      # compute full size
         self.ordinate_size = half_size * 2 + 1      # compute full size
         self.grid = self.init_matrix()              # initialize patch content
+        # self.window = Grid(...)                   # initialize window around the patch
         self.fill_grid(self.center, image)
     # end def
 

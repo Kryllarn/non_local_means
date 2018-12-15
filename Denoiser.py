@@ -59,24 +59,31 @@ class Denoiser:
         self.init_patchs_array(patch_size)
         closest_patch = []
 
-        # Image
-        for x in range(self.denoised_image.width()):
-            for y in range(self.denoised_image.height()):
-
-                # Window
+        # Image width
+        for x in range(self.denoised_image.width):
+            # Image height
+            for y in range(self.denoised_image.height):
+                # Window width
                 for u in range(window_size):
+                    # Window height
                     for t in range(window_size):
-                        if (x + u - ((window_size - 1) / 2) >= 0 and
-                                y + t - ((window_size - 1) / 2) >= 0 and
-                                x + u + ((window_size - 1) / 2) < self.denoised_image.width() and
-                                y + t + ((window_size - 1) / 2) < self.denoised_image.height()):
+                        if (
+                            x + u - ((window_size - 1) / 2) >= 0
+                            and y + t - ((window_size - 1) / 2) >= 0
+                            and x + u + ((window_size - 1) / 2) < self.denoised_image.width
+                            and y + t + ((window_size - 1) / 2) < self.denoised_image.height
+                        ):
                             tmp = self.patchs_array[x][y].compare_grid(self.patchs_array[u][t])
+
                             if self.closest_patchs_array_current_size < self.closest_patchs_array_maximum_size:
                                 self.closest_patchs_array[self.closest_patchs_array_current_size] = (u, t, tmp)
                                 self.closest_patchs_array_current_size += 1
+                            # end if
                             else:
                                 if self.get_index_of_maximal_distance() > tmp:
                                     self.closest_patchs_array[self.get_index_of_maximal_distance()] = (u, t, tmp)
+                                # end if
+                            # end else
                         # end if
                     # end for
                 # end for

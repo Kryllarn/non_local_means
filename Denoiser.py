@@ -102,7 +102,7 @@ class Denoiser:
                     distance += n[2]
                 # end for
                 for n in self.closest_patchs_array:
-                    pixel += self.noised_image.getpixel((n[0], n[1])) * distance / n[2]
+                    pixel += self.noised_image.getpixel((n[0], n[1])) * distance * (1-n[2])
                 # end for
                 self.denoised_image.putpixel((x, y), pixel)
             # end for

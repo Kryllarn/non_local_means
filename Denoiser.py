@@ -35,12 +35,12 @@ class Denoiser:
 
     def get_index_of_maximal_distance(self):
         index = 0
-        # maximum = self.patchs_array[0][2]
-        maximum = self.closest_patchs_array[0]
+        maximum = self.closest_patchs_array[0][2]
         for i in range(self.closest_patchs_array_maximum_size):
-            if maximum < self.closest_patchs_array[i]:
+            print("""maximum""", maximum, """index""", index)
+            if maximum < self.closest_patchs_array[i][2]:
                 index = i
-                maximum = self.closest_patchs_array[i]
+                # maximum = self.closest_patchs_array[i][2]
             # end if
         # end for
         return index
@@ -90,9 +90,7 @@ class Denoiser:
                                 self.closest_patchs_array_current_size += 1
                             # end if
                             else:
-                                if self.get_index_of_maximal_distance() > tmp:
-                                    self.closest_patchs_array[self.get_index_of_maximal_distance()] = (u, t, tmp)
-                                # end if
+                                self.closest_patchs_array[self.get_index_of_maximal_distance()] = (u, t, tmp)
                             # end else
                         # end if
                     # end for
@@ -124,7 +122,6 @@ class Denoiser:
 if __name__ == """__main__""":
     denoiser = Denoiser("""pictures/input.png""")
     denoiser.init_patchs_array(1)
-    print(denoiser.patchs_array)
     denoiser.run(1, 10)
     denoiser.show("""input""")
     denoiser.show("""output""")

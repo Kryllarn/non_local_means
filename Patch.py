@@ -36,6 +36,7 @@ class Patch(Grid):
         # end for
     # end def
 
+    # TODO: fix this method
     def compare_grid(self, grid):
         distance = 0
         for x in range(self.abscissa_size):

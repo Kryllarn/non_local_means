@@ -37,10 +37,10 @@ class Denoiser:
         index = 0
         maximum = self.closest_patchs_array[0][2]
         for i in range(self.closest_patchs_array_maximum_size):
-            print("""maximum""", maximum, """index""", index)
+            # print("""maximum""", maximum, """index""", index)
             if maximum < self.closest_patchs_array[i][2]:
                 index = i
-                # maximum = self.closest_patchs_array[i][2]
+                maximum = self.closest_patchs_array[i][2]
             # end if
         # end for
         return index

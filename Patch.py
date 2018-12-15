@@ -38,12 +38,14 @@ class Patch(Grid):
 
     def compare_grid(self, grid):
         distance = 0
-        size = self.abscissa_size  # - 1
-        for x in range(size):
-            for y in range(size):
+        for x in range(self.abscissa_size):
+            for y in range(self.ordinate_size):
                 # if grid[x][y] != -1:
-                if type(grid[x][y]) is Patch:
-                    distance += abs(grid[x][y] - self.grid[x][y])
+                if (
+                    type(grid) is Patch
+                    and grid.grid[x][y] != -1
+                ):
+                    distance += abs(grid.grid[x][y] - self.grid[x][y])
                 # end if
             # end for
         # end for

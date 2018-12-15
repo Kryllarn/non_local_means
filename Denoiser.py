@@ -25,12 +25,22 @@ class Denoiser:
               """; Size :""", image.size, """}""")
     # end def
 
+    # def dist_max(tab_patch):
+    #     ind = 0
+    #     max = tab_patch[0][2]
+    #     for i in range(tab_patch.__sizeof__):
+    #         if max < tab_patch[i][2]:
+    #             ind = i
+    #     return ind
+
     def get_index_of_maximal_distance(self):
         index = 0
-        maximum = self.patchs_array[0][2]
-        for i in range(self.patchs_array.__sizeof__()):
-            if maximum < self.patchs_array[i][2]:
+        # maximum = self.patchs_array[0][2]
+        maximum = self.closest_patchs_array[0]
+        for i in range(self.closest_patchs_array_maximum_size):
+            if maximum < self.closest_patchs_array[i]:
                 index = i
+                maximum = self.closest_patchs_array[i]
             # end if
         # end for
         return index
@@ -38,9 +48,7 @@ class Denoiser:
 
     def init_patchs_array(self, size):
         self.patchs_array = [[-1] * self.denoised_image.height] * self.denoised_image.width
-        # self.patchs_array = [[Patch((x, y), size, self.noised_image)
-        # for y in range(self.denoised_image.height)]
-        # for x in range(self.denoised_image.width)]
+
         for x in range(self.denoised_image.width):
             for y in range(self.denoised_image.height):
                 self.patchs_array[x][y] = Patch((x, y), size, self.noised_image)
@@ -56,8 +64,10 @@ class Denoiser:
     # end def
 
     def run(self, patch_size, window_size):
+        distance = 0
+        pixel = 0
         self.init_patchs_array(patch_size)
-        closest_patch = []
+        self.closest_patchs_array = [[] for n in range(self.closest_patchs_array_maximum_size)]
 
         # Image width
         for x in range(self.denoised_image.width):
@@ -88,12 +98,12 @@ class Denoiser:
                     # end for
                 # end for
 
-                dist_total = 0
-                for i in closest_patch:
-                    dist_total += i[2]
-                pixel = 0
-                for i in closest_patch:
-                    pixel += self.noised_image.getPixel((i[0], i[1])) * dist_total / i[2]
+                for n in self.closest_patchs_array:
+                    distance += n[2]
+                # end for
+                for n in self.closest_patchs_array:
+                    pixel += self.noised_image.getpixel((n[0], n[1])) * distance / n[2]
+                # end for
                 self.denoised_image.putpixel((x, y), pixel)
             # end for
         # end for

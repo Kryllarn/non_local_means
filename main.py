@@ -6,7 +6,7 @@ import numpy as np
 
 
 # Lecture de l'image initiale
-PIL_image = img.open("""input.png""")
+PIL_image = img.open("""pictures/input.png""")
 
 # Caracteristiques de l'image
 print("""{ Format :""", PIL_image.format,
@@ -45,8 +45,8 @@ PIL_image.save("""output.png""", format="""png""")
 # PIL_image = PIL_image.transpose(Image.FLIP_LEFT_RIGHT)  # Transposition de l'image
 # PIL_image.show()                                        # Affichage de l'image
 
-# PIL_image.getpixel((0, 0))                              # Get la valeur d'un pixel
-# PIL_image.putpixel((0, 0), 0)                           # Set la valeur d'un pixel
+PIL_image.getpixel((0, 0))                              # Get la valeur d'un pixel
+PIL_image.putpixel((0, 0), 0)                           # Set la valeur d'un pixel
 
 # for i in range(PIL_image.size[0]):
 #     for j in range(PIL_image.size[1]):

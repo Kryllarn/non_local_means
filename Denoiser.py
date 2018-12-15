@@ -37,6 +37,10 @@ class Denoiser:
     # end def
 
     def init_patchs_array(self, size):
+        self.patchs_array = [[-1] * self.denoised_image.height] * self.denoised_image.width
+        # self.patchs_array = [[Patch((x, y), size, self.noised_image)
+        # for y in range(self.denoised_image.height)]
+        # for x in range(self.denoised_image.width)]
         for x in range(self.denoised_image.width):
             for y in range(self.denoised_image.height):
                 self.patchs_array[x][y] = Patch((x, y), size, self.noised_image)
@@ -102,6 +106,8 @@ class Denoiser:
 
 if __name__ == """__main__""":
     denoiser = Denoiser("""pictures/input.png""")
+    denoiser.init_patchs_array(1)
+    print(denoiser.patchs_array)
     denoiser.run(1, 10)
     denoiser.show("""input""")
     denoiser.show("""output""")

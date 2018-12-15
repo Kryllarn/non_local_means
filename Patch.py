@@ -4,12 +4,9 @@ from Grid import *
 class Patch(Grid):
 
     def __init__(self, center, half_size, image):
+        Grid.__init__(self, half_size * 2 + 1, half_size * 2 + 1)
         self.center = center                        # center as a tuple(2) where center[0] is x, and center[1] is y
         self.half_size = half_size                  # default half size
-        self.abscissa_size = half_size * 2 + 1      # compute full size
-        self.ordinate_size = half_size * 2 + 1      # compute full size
-        self.grid = self.init_grid()              # initialize patch content
-        # self.window = Grid(...)                   # initialize window around the patch
         self.fill_grid(self.center, image)
     # end def
 
@@ -18,9 +15,9 @@ class Patch(Grid):
             for y in range(self.ordinate_size):
                 if (center[0] + x - self.half_size >= 0 and
                         center[1] + y - self.half_size >= 0 and
-                        center[0] + x + self.half_size < image.width() and
-                        center[1] + y + self.half_size < image.height()):
-                    self.grid[x][y] = image.getPixel((x - self.half_size, y - self.half_size))
+                        center[0] + x + self.half_size < image.width and
+                        center[1] + y + self.half_size < image.height):
+                    self.grid[x][y] = image.getpixel((x - self.half_size, y - self.half_size))
                 # end if
             # end for
         # end for

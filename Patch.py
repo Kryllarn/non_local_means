@@ -23,12 +23,12 @@ class Patch(Grid):
                 #     and center[1] + y + (self.ordinate_size - 1) / 2 < image.height
                 #):
 
-                # if (center[0] + x - self.half_size >= 0 and
-                #         center[1] + y - self.half_size >= 0 and
-                #         center[0] + x + self.half_size < image.width and
-                #         center[1] + y + self.half_size < image.height):
-                #     self.grid[x][y] = image.getpixel((x, y))
-                # end if
+                if (center[0] + x - self.half_size >= 0 and
+                    center[1] + y - self.half_size >= 0 and
+                    center[0] + x + self.half_size < image.width and
+                    center[1] + y + self.half_size < image.height):
+                    self.grid[x][y] = image.getpixel((center[0] + x - self.half_size, center[1] + y - self.half_size))
+                 #end if
 
                 # print("""x""", x, """y""", y, """pixel""", self.grid[x][y])
                 # if (

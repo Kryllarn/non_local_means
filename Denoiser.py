@@ -121,6 +121,11 @@ class Denoiser:
 
 if __name__ == """__main__""":
     denoiser = Denoiser("""pictures/input.png""")
+    # for x in range(denoiser.noised_image.width):
+    #     for y in range(denoiser.noised_image.height):
+    #         print(denoiser.noised_image.getpixel((x, y)))
+    #     # end for
+    # # end for
     denoiser.init_patchs_array(1)
     denoiser.run(1, 10)
     denoiser.show("""input""")

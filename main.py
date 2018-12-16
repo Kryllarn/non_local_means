@@ -17,6 +17,10 @@ if PIL_image.mode == """RGBA""":
     # Changement du mode de l'image, L <=> greyscale
     PIL_image = PIL_image.convert("""L""")
 
+for x in range(PIL_image.width):
+    for y in range(PIL_image.height):
+        print(PIL_image.getpixel((x, y)))
+
 # Caracteristiques materielles
 cores = mp.cpu_count()
 print("""{ Cores :""", cores, """}""")

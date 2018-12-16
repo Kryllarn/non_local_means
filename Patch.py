@@ -13,8 +13,8 @@ class Patch(Grid):
     def fill_grid(self, center, image):
         for x in range(self.abscissa_size):
             for y in range(self.ordinate_size):
-                print("""GRILLE""", """x""", x, """y""", y, """pixel""", self.grid[x][y])
-                print("""IMAGE""", """x""", x, """y""", y, """pixel""", image.getpixel((x, y)))
+            #    print("""GRILLE""", """x""", x, """y""", y, """pixel""", self.grid[x][y])
+             #   print("""IMAGE""", """x""", x, """y""", y, """pixel""", image.getpixel((x, y)))
 
                 # if (
                 #     center[0] - x - (self.abscissa_size - 1) / 2 >= 0
@@ -28,6 +28,8 @@ class Patch(Grid):
                     center[0] + x + self.half_size < image.width and
                     center[1] + y + self.half_size < image.height):
                     self.grid[x][y] = image.getpixel((center[0] + x - self.half_size, center[1] + y - self.half_size))
+                    #print(self.grid[x][y])
+                #print(self.grid[x][y],", ", self.grid[x][y])
                  #end if
 
                 # print("""x""", x, """y""", y, """pixel""", self.grid[x][y])
@@ -64,7 +66,9 @@ class Patch(Grid):
                 if (
                     type(grid) is Patch
                     and grid.grid[x][y] != -1
+                    and self.grid[x][y] != -1
                 ):
+                    print("on passe dedans")
                     distance += abs(grid.grid[x][y] - self.grid[x][y])
                 # end if
             # end for

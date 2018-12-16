@@ -25,8 +25,8 @@ class Patch(Grid):
 
                 if (center[0] + x - self.half_size >= 0 and
                     center[1] + y - self.half_size >= 0 and
-                    center[0] + x + self.half_size < image.width and
-                    center[1] + y + self.half_size < image.height):
+                    center[0] + x - self.half_size < image.width and
+                    center[1] + y - self.half_size < image.height):
                     self.grid[x][y] = image.getpixel((center[0] + x - self.half_size, center[1] + y - self.half_size))
                     #print(self.grid[x][y])
                 #print(self.grid[x][y],", ", self.grid[x][y])
@@ -68,7 +68,7 @@ class Patch(Grid):
                     and grid.grid[x][y] != -1
                     and self.grid[x][y] != -1
                 ):
-                    print("on passe dedans")
+                    #print("on passe dedans")
                     distance += abs(grid.grid[x][y] - self.grid[x][y])
                 # end if
             # end for

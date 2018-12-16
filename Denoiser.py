@@ -11,7 +11,6 @@ class Denoiser:
         self.noised_image = Image.open(filename)
         self.prepare_image()
         self.denoised_image = Image.new("""L""", (self.noised_image.size[0], self.noised_image.size[1]))
-        self.denoised_image.save("""pictures/output.png""")
         self.patchs_array = [[]]
         self.closest_patchs_array = []
         self.closest_patchs_array_current_size = 0
@@ -33,16 +32,25 @@ class Denoiser:
     #             ind = i
     #     return ind
 
+    def triDist(self):
+        for i in range(1,tab):
+            tmp = 0
+            while(i - tmp> 0 and self[i - tmp][2] < self[i - 1 - tmp][2]):
+                tmp2 = self[i - tmp]
+                self[i - tmp] = self[i - tmp - 1]
+                self[i - 1 - tmp] = tmp2
+
+
     def get_index_of_maximal_distance(self):
         index = 0
         maximum = self.closest_patchs_array[0][2]
-        for i in range(self.closest_patchs_array_maximum_size):
+        for i in range(1, self.closest_patchs_array_maximum_size):
             if maximum < self.closest_patchs_array[i][2]:
                 index = i
                 maximum = self.closest_patchs_array[i][2]
             # end if
         # end for
-        print("""maximum""", maximum, """index""", index)
+        #print("""maximum""", maximum, """index""", index)
         return index
     # end def
 
@@ -52,9 +60,9 @@ class Denoiser:
         for x in range(self.denoised_image.width):
             for y in range(self.denoised_image.height):
                 self.patchs_array[x][y] = Patch((x, y), size, self.noised_image)
-                #print("grid :",self.patchs_array[x][y].grid[0][0])
             # end for
         # end for
+        #print("grid 1:", self.patchs_array[0][0].grid[0][0])
     # end def
 
     def prepare_image(self):
@@ -70,44 +78,53 @@ class Denoiser:
         self.init_patchs_array(patch_size)
         self.closest_patchs_array = []
 
+        #print("grid :", self.patchs_array[5][15].grid[0][0])
         # Image width
         for x in range(self.denoised_image.width):
             # Image height
             for y in range(self.denoised_image.height):
                 # Window width
+                self.closest_patchs_array.clear()
+                self.closest_patchs_array_current_size = 0
                 for u in range(window_size):
                     # Window height
                     for t in range(window_size):
                         if (
                             x + u - ((window_size - 1) / 2) >= 0
                             and y + t - ((window_size - 1) / 2) >= 0
-                            and x + u + ((window_size - 1) / 2) < self.denoised_image.width
-                            and y + t + ((window_size - 1) / 2) < self.denoised_image.height
+                            and x + u - ((window_size - 1) / 2) < self.denoised_image.width
+                            and y + t - ((window_size - 1) / 2) < self.denoised_image.height
                         ):
                             tmp = self.patchs_array[x][y].compare_grid(self.patchs_array[x + u- int((window_size - 1) / 2)][y + t- int((window_size - 1) / 2)])
-                            print("patch : ", self.patchs_array[x][y].grid[2][2])
+                            #print("patch : ", self.patchs_array[x][y].grid[2][2])
                             if self.closest_patchs_array_current_size < self.closest_patchs_array_maximum_size:
                                 self.closest_patchs_array.append([u, t, tmp])
                                 self.closest_patchs_array_current_size += 1
                             # end if
                             else:
-                                self.closest_patchs_array[self.get_index_of_maximal_distance()] = [u, t, tmp]
+                                self.closest_patchs_array[self.get_index_of_maximal_distance()] = [x + u- int((window_size - 1) / 2), y + t- int((window_size - 1) / 2), tmp]
                             # end else
                         # end if
                     # end for
                 # end for
-
+                pixel = 0
+                distance = 0
                 for n in self.closest_patchs_array:
                     distance += n[2]
                 # end for
-                if distance == 0:
-                    pixel = self.noised_image.getpixel((self.closest_patchs_array[0][0], self.closest_patchs_array[0][1]))
-                else:
-                    for n in self.closest_patchs_array:
-                        pixel += self.noised_image.getpixel((n[0], n[1])) * n[2] / distance
+              #  if distance == 0:
+                    #pixel = self.noised_image.getpixel((self.closest_patchs_array[0][0], self.closest_patchs_array[0][1]))
+                  #  self.denoised_image.putpixel((x, y), self.noised_image.getpixel((x,y)))
+                    #print(x, y)
+             #   else:
+                for n in self.closest_patchs_array:
+                    pixel += self.noised_image.getpixel((n[0], n[1])) / 5
+                self.denoised_image.putpixel((x, y), int(pixel))
+                       # print(pixel)
                 #print("Valeur pixel : ",pixel)
                 # end for
-                self.denoised_image.putpixel((x, y), pixel)
+
+
             # end for
         # end for
     # end def
@@ -131,8 +148,8 @@ if __name__ == """__main__""":
     #         print(denoiser.noised_image.getpixel((x, y)))
     #     # end for
     # # end for
-    denoiser.init_patchs_array(1)
-    denoiser.run(1, 3)
+    #denoiser.init_patchs_array(1)
+    denoiser.run(1, 5)
     denoiser.denoised_image.save("pictures/output.png", "PNG")
     denoiser.show("""input""")
     denoiser.show("""output""")

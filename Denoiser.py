@@ -89,12 +89,12 @@ class Denoiser:
 						)
 
 						if closest_patchs_array_current_size < closest_patchs_array_maximum_size:
-							closest_patchs_array.append([x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-(tmp / h))])
+							closest_patchs_array.append([x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-tmp / h)])
 							closest_patchs_array_current_size += 1
 						# end if
 						else:
 							closest_patchs_array[self.get_index_of_maximal_distance(closest_patchs_array)] = [
-								x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-(tmp / h))]
+								x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-tmp / h)]
 						# end else
 					# end if
 				# end for
@@ -106,8 +106,8 @@ class Denoiser:
 			pixel = 0
 
 			for n in closest_patchs_array:
-				distance = n[2] * (1/sum_weight)
-				pixel += distance * self.noised_image.getpixel((n[0], n[1]))
+				weight = n[2] / sum_weight
+				pixel += weight * self.noised_image.getpixel((n[0], n[1]))
 			# end for
 
 			# pixel = pixel / self.closest_patchs_array_maximum_size
@@ -142,7 +142,7 @@ class Denoiser:
 
 if __name__ == """__main__""":
 	denoiser = Denoiser("""pictures/input.png""")
-	denoiser.run(3, 9)
+	denoiser.run(1, 5)
 	denoiser.denoised_image.save("pictures/output.png", "PNG")
 	denoiser.show("""input""")
 	denoiser.show("""output""")

@@ -73,7 +73,6 @@ class Denoiser:
 			closest_patchs_array_maximum_size = self.closest_patchs_array_maximum_size
 			sum_weight = 0
 			h = 100
-			h = h ** 2
 			for u in range(self.window_size):
 				# Window height
 				for t in range(self.window_size):
@@ -106,12 +105,13 @@ class Denoiser:
 			pixel = 0
 
 			for n in closest_patchs_array:
-				weight = n[2] / sum_weight
+				weight = n[2] * (1.0 / self.closest_patchs_array_maximum_size)
 				pixel += weight * self.noised_image.getpixel((n[0], n[1]))
 			# end for
 
 			# pixel = pixel / self.closest_patchs_array_maximum_size
-			self.denoised_image.putpixel((x, y), int(pixel))
+			pixel = pixel / sum_weight
+			self.denoised_image.putpixel((x, y), int(pixel) * self.closest_patchs_array_maximum_size)
 
 
 	def run(self, patch_size, window_size):
@@ -142,7 +142,7 @@ class Denoiser:
 
 if __name__ == """__main__""":
 	denoiser = Denoiser("""pictures/input.png""")
-	denoiser.run(1, 5)
+	denoiser.run(2, 5)
 	denoiser.denoised_image.save("pictures/output.png", "PNG")
 	denoiser.show("""input""")
 	denoiser.show("""output""")

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:Utf-8 -*-
 
+
+from joblib import Parallel, delayed
+from math import exp
 from Patch import *
 from PIL import Image
-from joblib import Parallel, delayed
 import multiprocessing
 
 
@@ -39,7 +41,6 @@ class Denoiser:
 				maximum = tab[i][2]
 			# end if
 		# end for
-		# print("""maximum""", maximum, """index""", index)
 		return index
 
 	# end def
@@ -53,7 +54,6 @@ class Denoiser:
 				self.patchs_array[x][y] = Patch((x, y), size, self.noised_image)
 			# end for
 		# end for
-		# print("grid 1:", self.patchs_array[0][0].grid[0][0])
 
 	# end def
 
@@ -65,66 +65,64 @@ class Denoiser:
 
 	# end def
 
-	def funDenoise(self, x):
+	def denoise(self, x):
 		for y in range(self.denoised_image.height):
 			# Window width
 			closest_patchs_array = []
 			closest_patchs_array_current_size = self.closest_patchs_array_current_size
 			closest_patchs_array_maximum_size = self.closest_patchs_array_maximum_size
+			sum_weight = 0
+			h = 100
+			h = h ** 2
 			for u in range(self.window_size):
 				# Window height
 				for t in range(self.window_size):
 					if (
-							x + u - ((self.window_size - 1) / 2) >= 0
-							and y + t - ((self.window_size - 1) / 2) >= 0
-							and x + u - ((self.window_size - 1) / 2) < self.denoised_image.width
-							and y + t - ((self.window_size - 1) / 2) < self.denoised_image.height
+						x + u - ((self.window_size - 1) / 2) >= 0
+						and y + t - ((self.window_size - 1) / 2) >= 0
+						and x + u - ((self.window_size - 1) / 2) < self.denoised_image.width
+						and y + t - ((self.window_size - 1) / 2) < self.denoised_image.height
 					):
 						tmp = self.patchs_array[x][y].compare_grid(
-							self.patchs_array[x + u - int((self.window_size - 1) / 2)][
-								y + t - int((self.window_size - 1) / 2)])
-						# print("patch : ", self.patchs_array[x][y].grid[2][2])
+							self.patchs_array[x + u - int((self.window_size - 1) / 2)]
+							[y + t - int((self.window_size - 1) / 2)]
+						)
+
 						if closest_patchs_array_current_size < closest_patchs_array_maximum_size:
-							closest_patchs_array.append([x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), tmp])
+							closest_patchs_array.append([x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-(tmp / h))])
 							closest_patchs_array_current_size += 1
 						# end if
 						else:
 							closest_patchs_array[self.get_index_of_maximal_distance(closest_patchs_array)] = [
-								x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), tmp]
+								x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-(tmp / h))]
 						# end else
 					# end if
 				# end for
+
+			for n in closest_patchs_array:
+				sum_weight += n[2]
 			# end for
+
 			pixel = 0
-			distance = 0
+
 			for n in closest_patchs_array:
-				distance += n[2]
+				distance = n[2] * (1/sum_weight)
+				pixel += distance * self.noised_image.getpixel((n[0], n[1]))
 			# end for
-			#  if distance == 0:
-			# pixel = self.noised_image.getpixel((self.closest_patchs_array[0][0], self.closest_patchs_array[0][1]))
-			#  self.denoised_image.putpixel((x, y), self.noised_image.getpixel((x,y)))
-			# print(x, y)
-			#   else:
-			for n in closest_patchs_array:
-				pixel += self.noised_image.getpixel((n[0], n[1])) / 5
+
+			# pixel = pixel / self.closest_patchs_array_maximum_size
 			self.denoised_image.putpixel((x, y), int(pixel))
 
+
 	def run(self, patch_size, window_size):
-		distance = 0
-		pixel = 0
+
 		self.init_patchs_array(patch_size)
 		self.closest_patchs_array = []
 		self.patch_size = patch_size
 		self.window_size = window_size
-		# print("grid :", self.patchs_array[5][15].grid[0][0])
-		# Image width
-		# for x in range(self.denoised_image.width):
-		# Image height
-		#   self.funDenoise(x)
-		num_cores = multiprocessing.cpu_count()
-		inputs = range(self.denoised_image.width)
-		Parallel(n_jobs=1)(delayed(self.funDenoise)(i) for i in inputs)
-		# end for
+
+		for x in range(self.denoised_image.width):
+			self.denoise(x)
 		# end for
 
 	# end def
@@ -144,13 +142,7 @@ class Denoiser:
 
 if __name__ == """__main__""":
 	denoiser = Denoiser("""pictures/input.png""")
-	# for x in range(denoiser.noised_image.width):
-	#     for y in range(denoiser.noised_image.height):
-	#         print(denoiser.noised_image.getpixel((x, y)))
-	#     # end for
-	# # end for
-	# denoiser.init_patchs_array(1)
-	denoiser.run(1, 5)
+	denoiser.run(3, 9)
 	denoiser.denoised_image.save("pictures/output.png", "PNG")
 	denoiser.show("""input""")
 	denoiser.show("""output""")

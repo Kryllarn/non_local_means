@@ -57,7 +57,6 @@ class Patch(Grid):
         # end for
     # end def
 
-    # TODO: fix this method
     def compare_grid(self, grid):
         distance = 0
         for x in range(self.abscissa_size):
@@ -68,7 +67,7 @@ class Patch(Grid):
                     and grid.grid[x][y] != -1
                     and self.grid[x][y] != -1
                 ):
-                    #print("on passe dedans")
+                    # print("on passe dedans")
                     distance += abs(grid.grid[x][y] - self.grid[x][y])
                 # end if
             # end for

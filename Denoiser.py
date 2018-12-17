@@ -2,11 +2,9 @@
 # -*- coding:Utf-8 -*-
 
 
-from joblib import Parallel, delayed
 from math import exp
 from Patch import *
 from PIL import Image
-import multiprocessing
 
 
 class Denoiser:
@@ -21,8 +19,23 @@ class Denoiser:
 		self.closest_patchs_array = []
 		self.closest_patchs_array_current_size = 0
 		self.closest_patchs_array_maximum_size = 5
-
 	# end def
+
+	def compare_pictures(self):
+		original_picture = Image.open("""pictures/original.png""")
+		comparison = Image.new("""L""", (original_picture.size[0], original_picture.size[1]))
+
+		for x in range(original_picture.width):
+			for y in range(original_picture.height):
+				pixel_o = original_picture.getpixel((x, y))
+				pixel_d = self.denoised_image.getpixel((x, y))
+				comparison.putpixel((x, y), abs(pixel_o[0] - pixel_d))
+			# end for
+		#end for
+
+		comparison.save("""pictures/comparison.png""", """PNG""")
+	# end def
+
 
 	@staticmethod
 	def display_image_details(image):
@@ -73,14 +86,15 @@ class Denoiser:
 			closest_patchs_array_maximum_size = self.closest_patchs_array_maximum_size
 			sum_weight = 0
 			h = 100
+			h = h ** 2
 			for u in range(self.window_size):
 				# Window height
 				for t in range(self.window_size):
 					if (
-						x + u - ((self.window_size - 1) / 2) >= 0
-						and y + t - ((self.window_size - 1) / 2) >= 0
-						and x + u - ((self.window_size - 1) / 2) < self.denoised_image.width
-						and y + t - ((self.window_size - 1) / 2) < self.denoised_image.height
+							x + u - ((self.window_size - 1) / 2) >= 0
+							and y + t - ((self.window_size - 1) / 2) >= 0
+							and x + u - ((self.window_size - 1) / 2) < self.denoised_image.width
+							and y + t - ((self.window_size - 1) / 2) < self.denoised_image.height
 					):
 						tmp = self.patchs_array[x][y].compare_grid(
 							self.patchs_array[x + u - int((self.window_size - 1) / 2)]
@@ -88,12 +102,15 @@ class Denoiser:
 						)
 
 						if closest_patchs_array_current_size < closest_patchs_array_maximum_size:
-							closest_patchs_array.append([x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-tmp / h)])
+							closest_patchs_array.append([x + u - int((self.window_size - 1) / 2),
+														 y + t - int((self.window_size - 1) / 2),
+														 exp(-tmp / h)])
 							closest_patchs_array_current_size += 1
 						# end if
 						else:
 							closest_patchs_array[self.get_index_of_maximal_distance(closest_patchs_array)] = [
-								x + u - int((self.window_size - 1) / 2), y + t - int((self.window_size - 1) / 2), exp(-tmp / h)]
+								x + u - int((self.window_size - 1) / 2),
+								y + t - int((self.window_size - 1) / 2), exp(-tmp / h)]
 						# end else
 					# end if
 				# end for
@@ -105,14 +122,12 @@ class Denoiser:
 			pixel = 0
 
 			for n in closest_patchs_array:
-				weight = n[2] * (1.0 / self.closest_patchs_array_maximum_size)
+				weight = n[2] / sum_weight
 				pixel += weight * self.noised_image.getpixel((n[0], n[1]))
 			# end for
 
-			# pixel = pixel / self.closest_patchs_array_maximum_size
-			pixel = pixel / sum_weight
-			self.denoised_image.putpixel((x, y), int(pixel) * self.closest_patchs_array_maximum_size)
-
+			pixel = (pixel + self.noised_image.getpixel((x, y))) / 2
+			self.denoised_image.putpixel((x, y), int(pixel))
 
 	def run(self, patch_size, window_size):
 
@@ -142,7 +157,8 @@ class Denoiser:
 
 if __name__ == """__main__""":
 	denoiser = Denoiser("""pictures/input.png""")
-	denoiser.run(2, 5)
+	denoiser.compare_pictures()
+	denoiser.run(5, 9)
 	denoiser.denoised_image.save("pictures/output.png", "PNG")
 	denoiser.show("""input""")
 	denoiser.show("""output""")
